@@ -17,6 +17,7 @@ export const getProductsSchema = {
     colors: Joi.string().trim().optional(),
     sizes: Joi.string().trim().optional(),
     style: Joi.string().valid('Casual', 'Formal', 'Party', 'Gym'),
+    search: Joi.string(),
   }),
 };
 

@@ -9,9 +9,16 @@ export const getProductsService = async (
   colors,
   sizes,
   style,
+  search,
 ) => {
   const skip = (page - 1) * limit;
   const productsQuery = Product.find();
+
+  if (search && search.trim()) {
+    productsQuery.where({
+      title: { $regex: search, $options: 'i' },
+    });
+  }
 
   if (category) {
     productsQuery.where('category').equals(category);

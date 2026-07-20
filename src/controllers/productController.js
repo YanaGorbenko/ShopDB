@@ -6,7 +6,8 @@ import {
 } from '../services/productsService.js';
 
 export const getProducts = async (req, res) => {
-  const { page, limit, category, minPrice, maxPrice, style } = req.query;
+  const { page, limit, category, minPrice, maxPrice, style, search } =
+    req.query;
   let { colors, sizes } = req.query;
   if (colors && typeof colors === 'string') {
     colors = colors.split(',').map(c => c.trim());
@@ -23,6 +24,7 @@ export const getProducts = async (req, res) => {
     colors,
     sizes,
     style,
+    search,
   );
   res.json(products);
 };
