@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/YanaGorbenko/ShopDB#readme",
   "dependencies": {
+    "celebrate": "^15.0.3",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "http-errors": "^2.0.1",
