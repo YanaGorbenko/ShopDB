@@ -4,6 +4,7 @@ import { connectDb } from './db/connectDB.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import productsRouter from './routers/productsRouter.js';
 import authRouter from './routers/authRouter.js';
+import orderRouter from './routers/ordersRouter.js';
 import cookieParser from 'cookie-parser';
 import { errors } from 'celebrate';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
@@ -16,6 +17,7 @@ app.use(cookieParser());
 
 app.use('/auth', authRouter);
 app.use('/products', productsRouter);
+app.use('/orders', orderRouter);
 
 app.use(notFoundHandler);
 app.use(errors());
