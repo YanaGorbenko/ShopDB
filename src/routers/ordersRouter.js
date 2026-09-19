@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createOrder } from '../controllers/orderController.js';
+import { createOrder, getUserOrders } from '../controllers/orderController.js';
 import { checkToken } from '../middlewares/checkToken.js';
 import { createOrderSchema } from '../validation/orderValidation.js';
 import { celebrate } from 'celebrate';
@@ -11,5 +11,7 @@ orderRouter.post(
   celebrate(createOrderSchema),
   createOrder,
 );
+
+orderRouter.get('/getOrders', checkToken, getUserOrders);
 
 export default orderRouter;

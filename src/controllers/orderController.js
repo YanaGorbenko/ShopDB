@@ -1,6 +1,9 @@
 import createHttpError from 'http-errors';
 import { getNextOrderNumber } from '../services/counterService.js';
-import { createOrderService } from '../services/orderServices.js';
+import {
+  createOrderService,
+  getUserOrdersService,
+} from '../services/orderServices.js';
 import { Product } from '../db/models/ProductModel.js';
 
 export const createOrder = async (req, res) => {
@@ -64,4 +67,13 @@ export const createOrder = async (req, res) => {
   });
 
   res.status(201).json(order);
+};
+
+export const getUserOrders = async (req, res) => {
+  const userId = req.user._id;
+  const orders = await getUserOrdersService(userId);
+  if (!orders) {
+    throw createHttpError(400, `Не було знайдено замовлень`);
+  }
+  res.status(200).json(orders);
 };
