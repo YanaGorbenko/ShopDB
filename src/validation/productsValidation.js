@@ -18,6 +18,10 @@ export const getProductsSchema = {
     sizes: Joi.string().trim().optional(),
     style: Joi.string().valid('Casual', 'Formal', 'Party', 'Gym'),
     search: Joi.string(),
+    onSale: Joi.boolean(),
+    isNew: Joi.boolean(),
+    isTop: Joi.boolean(),
+    brands: Joi.string().optional(),
   }),
 };
 

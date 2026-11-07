@@ -8,8 +8,12 @@ export const getProductsService = async (
   maxPrice,
   colors,
   sizes,
+  brands,
   style,
   search,
+  onSale = false,
+  isNew = false,
+  isTop = false,
 ) => {
   const skip = (page - 1) * limit;
   const productsQuery = Product.find();
@@ -41,6 +45,26 @@ export const getProductsService = async (
 
   if (sizes && Array.isArray(sizes) && sizes.length > 0) {
     productsQuery.where('availableSizes').in(sizes);
+  }
+  if (brands && Array.isArray(brands) && brands.length > 0) {
+    productsQuery.where('brand').in(brands);
+  }
+
+  if (onSale) {
+    productsQuery.where({
+      oldPrice: { $ne: null, $exists: true, $gt: 0 },
+      $expr: { $gt: ['$oldPrice', '$price'] },
+    });
+  }
+
+  if (isNew) {
+    productsQuery.where('isNew').equals(true);
+  }
+
+  if (isTop) {
+    const TOP_THRESHOLD = 10;
+
+    productsQuery.where('soldCount').gte(TOP_THRESHOLD);
   }
 
   productsQuery.sort({ createdAt: -1 });

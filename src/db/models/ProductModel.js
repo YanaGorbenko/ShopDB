@@ -66,6 +66,15 @@ const productSchema = new Schema(
     },
     brand: String,
     isActive: { type: Boolean, default: true },
+    isNew: {
+      type: Boolean,
+      default: false,
+    },
+    soldCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   { timestamps: true, versionKey: false },
 );

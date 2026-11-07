@@ -6,14 +6,28 @@ import {
 } from '../services/productsService.js';
 
 export const getProducts = async (req, res) => {
-  const { page, limit, category, minPrice, maxPrice, style, search } =
-    req.query;
-  let { colors, sizes } = req.query;
+  const {
+    page,
+    limit,
+    category,
+    minPrice,
+    maxPrice,
+    style,
+    search,
+    onSale,
+    isNew,
+    isTop,
+  } = req.query;
+
+  let { colors, sizes, brands } = req.query;
   if (colors && typeof colors === 'string') {
     colors = colors.split(',').map(c => c.trim());
   }
   if (sizes && typeof sizes === 'string') {
     sizes = sizes.split(',').map(s => s.trim());
+  }
+  if (brands && typeof brands === 'string') {
+    brands = brands.split(',').map(s => s.trim());
   }
   const products = await getProductsService(
     page,
@@ -23,8 +37,12 @@ export const getProducts = async (req, res) => {
     maxPrice,
     colors,
     sizes,
+    brands,
     style,
     search,
+    onSale === 'true' || onSale === true,
+    isNew === 'true' || isNew === true,
+    isTop === 'true' || isTop === true,
   );
   res.json(products);
 };
