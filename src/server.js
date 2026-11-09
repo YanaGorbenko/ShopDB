@@ -8,6 +8,7 @@ import orderRouter from './routers/ordersRouter.js';
 import cookieParser from 'cookie-parser';
 import { errors } from 'celebrate';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import brandRouter from './routers/brandsRouter.js';
 
 const PORT = process.env.PORT || 3000;
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 app.use('/auth', authRouter);
 app.use('/products', productsRouter);
 app.use('/orders', orderRouter);
+app.use('/brands', brandRouter);
 
 app.use(notFoundHandler);
 app.use(errors());

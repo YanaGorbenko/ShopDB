@@ -64,7 +64,10 @@ const productSchema = new Schema(
       type: [String],
       default: [],
     },
-    brand: String,
+    brand: {
+      type: Schema.Types.ObjectId,
+      ref: 'Brand',
+    },
     isActive: { type: Boolean, default: true },
     isNew: {
       type: Boolean,

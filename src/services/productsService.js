@@ -1,3 +1,4 @@
+import { Brand } from '../db/models/BrandModel.js';
 import { Product } from '../db/models/ProductModel.js';
 
 export const getProductsService = async (
@@ -47,7 +48,19 @@ export const getProductsService = async (
     productsQuery.where('availableSizes').in(sizes);
   }
   if (brands && Array.isArray(brands) && brands.length > 0) {
-    productsQuery.where('brand').in(brands);
+    const brandRegexes = brands.map(b => new RegExp(`^${b.trim()}$`, 'i'));
+
+    const foundBrands = await Brand.find({
+      $or: [{ slug: { $in: brandRegexes } }, { name: { $in: brandRegexes } }],
+    });
+
+    const brandIds = foundBrands.map(b => b._id);
+
+    if (brandIds.length > 0) {
+      productsQuery.where('brand').in(brandIds);
+    } else {
+      return { products: [], totalCount: 0, totalPages: 0 };
+    }
   }
 
   if (onSale) {
