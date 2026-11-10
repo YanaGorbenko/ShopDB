@@ -1,7 +1,11 @@
 import { Router } from 'express';
-import { createOrder, getUserOrders } from '../controllers/orderController.js';
+import {
+  createOrder,
+  getUserOrderById,
+  getUserOrders,
+} from '../controllers/orderController.js';
 import { checkToken } from '../middlewares/checkToken.js';
-import { createOrderSchema } from '../validation/orderValidation.js';
+import { createOrderSchema, idSchema } from '../validation/orderValidation.js';
 import { celebrate } from 'celebrate';
 
 const orderRouter = Router();
@@ -12,6 +16,8 @@ orderRouter.post(
   createOrder,
 );
 
-orderRouter.get('/getOrders', checkToken, getUserOrders);
+orderRouter.get('/', checkToken, getUserOrders);
+orderRouter.get('/:orderId', checkToken, celebrate(idSchema), getUserOrderById);
+orderRouter.post('/', checkToken, celebrate(createOrderSchema), createOrder);
 
 export default orderRouter;

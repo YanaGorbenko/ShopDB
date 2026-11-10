@@ -15,7 +15,7 @@ export const getProducts = async (req, res) => {
     style,
     search,
     onSale,
-    isNew,
+    isNewProduct,
     isTop,
   } = req.query;
 
@@ -41,7 +41,7 @@ export const getProducts = async (req, res) => {
     style,
     search,
     onSale === 'true' || onSale === true,
-    isNew === 'true' || isNew === true,
+    isNewProduct === 'true' || isNew === true,
     isTop === 'true' || isTop === true,
   );
   res.json(products);

@@ -13,7 +13,7 @@ export const getProductsService = async (
   style,
   search,
   onSale = false,
-  isNew = false,
+  isNewProduct = false,
   isTop = false,
 ) => {
   const skip = (page - 1) * limit;
@@ -70,8 +70,8 @@ export const getProductsService = async (
     });
   }
 
-  if (isNew) {
-    productsQuery.where('isNew').equals(true);
+  if (isNewProduct) {
+    productsQuery.where('isNewProduct').equals(true);
   }
 
   if (isTop) {

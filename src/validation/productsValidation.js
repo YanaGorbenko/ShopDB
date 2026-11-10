@@ -19,7 +19,7 @@ export const getProductsSchema = {
     style: Joi.string().valid('Casual', 'Formal', 'Party', 'Gym'),
     search: Joi.string(),
     onSale: Joi.boolean(),
-    isNew: Joi.boolean(),
+    isNewProduct: Joi.boolean(),
     isTop: Joi.boolean(),
     brands: Joi.string().optional(),
   }),

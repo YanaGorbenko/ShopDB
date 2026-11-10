@@ -2,17 +2,21 @@ import createHttpError from 'http-errors';
 import { getNextOrderNumber } from '../services/counterService.js';
 import {
   createOrderService,
+  getProductsByIdsService,
+  getUserOrdersByIdService,
   getUserOrdersService,
+  updateSoldCountsService,
 } from '../services/orderServices.js';
-import { Product } from '../db/models/ProductModel.js';
 
 export const createOrder = async (req, res) => {
   const { items, discount = 0, delivery, customer, comment } = req.body;
   const userId = req.user._id;
-  //
-  const productIds = items.map(i => i.productId);
-  const productsFromDB = await Product.find({ _id: { $in: productIds } });
 
+  // 1. Получаем товары из базы через сервис
+  const productIds = items.map(i => i.productId);
+  const productsFromDB = await getProductsByIdsService(productIds);
+
+  // 2. Валидация товаров (размеры, цвета)
   const orderItems = items.map(item => {
     const product = productsFromDB.find(
       p => p._id.toString() === item.productId,
@@ -28,13 +32,13 @@ export const createOrder = async (req, res) => {
       );
     }
 
-    // Проверка цвета
     if (!product.availableColors.includes(item.color)) {
       throw createHttpError(
         400,
         `Цвет "${item.color}" недоступен для товара "${product.title}". Доступные: ${product.availableColors.join(', ')}`,
       );
     }
+
     return {
       productId: product._id,
       title: product.title,
@@ -45,6 +49,7 @@ export const createOrder = async (req, res) => {
     };
   });
 
+  // 3. Считаем суммы
   const sumOfOrder = orderItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0,
@@ -66,6 +71,8 @@ export const createOrder = async (req, res) => {
     comment,
   });
 
+  await updateSoldCountsService(orderItems);
+
   res.status(201).json(order);
 };
 
@@ -76,4 +83,14 @@ export const getUserOrders = async (req, res) => {
     throw createHttpError(400, `Не було знайдено замовлень`);
   }
   res.status(200).json(orders);
+};
+
+export const getUserOrderById = async (req, res) => {
+  const userId = req.user._id;
+  const { orderId } = req.params;
+  const order = await getUserOrdersByIdService(userId, orderId);
+  if (!order) {
+    throw createHttpError(404, `Order not found`);
+  }
+  res.status(200).json(order);
 };

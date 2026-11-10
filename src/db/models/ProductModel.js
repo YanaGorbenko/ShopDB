@@ -69,7 +69,7 @@ const productSchema = new Schema(
       ref: 'Brand',
     },
     isActive: { type: Boolean, default: true },
-    isNew: {
+    isNewProduct: {
       type: Boolean,
       default: false,
     },

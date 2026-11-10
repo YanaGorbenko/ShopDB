@@ -31,5 +31,11 @@ export const createOrderSchema = {
   }),
 };
 
+export const idSchema = {
+  [Segments.PARAMS]: Joi.object({
+    orderId: Joi.string().custom(validateId).required(),
+  }),
+};
+
 // size: { type: String, enum: ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL'], required: true },
 //         color: {type: String, required: true},
