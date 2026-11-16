@@ -1,11 +1,18 @@
 import { TWENTY_MINETES, TWO_DAYS } from '../constants/index.js';
+import { Basket } from '../db/models/BasketModel.js';
 import { Session } from '../db/models/SessionModel.js';
 import { User } from '../db/models/userModel.js';
 import { randomBytes } from 'node:crypto';
 
 export const findUserByEmail = email => User.findOne({ email });
 
-export const createUser = userData => User.create(userData);
+export const createUser = async userData => {
+  const user = await User.create(userData);
+
+  await Basket.create({ userId: user._id, items: [] });
+
+  return user;
+};
 
 export const createSession = userId => {
   const session = {
@@ -19,9 +26,10 @@ export const createSession = userId => {
   return Session.create(session);
 };
 
-export const deleteSessionByUserId = userId => Session.deleteOne({userId});
+export const deleteSessionByUserId = userId => Session.deleteOne({ userId });
 
-export const deleteSessionById = sessionId => Session.deleteOne({ _id: sessionId });
+export const deleteSessionById = sessionId =>
+  Session.deleteOne({ _id: sessionId });
 
 export const findSessionById = id => Session.findById(id);
 
