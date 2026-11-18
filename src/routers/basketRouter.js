@@ -3,11 +3,13 @@ import { checkToken } from '../middlewares/checkToken.js';
 import { celebrate } from 'celebrate';
 import {
   addProductToBasket,
+  changeProductAtBasket,
   deleteProductFromBasket,
   getBasket,
 } from '../controllers/basketController.js';
 import {
   addProductToBasketSchema,
+  changeProductAtBasketSchema,
   deleteProductFromBasketSchema,
 } from '../validation/basketValidation.js';
 
@@ -26,7 +28,11 @@ basketRouter.delete(
   celebrate(deleteProductFromBasketSchema),
   deleteProductFromBasket,
 );
-// orderRouter.get('/:orderId', checkToken, celebrate(idSchema), getUserOrderById);
-// orderRouter.post('/', checkToken, celebrate(createOrderSchema), createOrder);
+basketRouter.patch(
+  '/:itemId',
+  checkToken,
+  celebrate(changeProductAtBasketSchema),
+  changeProductAtBasket,
+);
 
 export default basketRouter;

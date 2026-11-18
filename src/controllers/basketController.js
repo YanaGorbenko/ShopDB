@@ -1,5 +1,6 @@
 import {
   addProductToBasketService,
+  changeProductAtBasketService,
   deleteProductFromBasketService,
   getBasketService,
 } from '../services/basketServices.js';
@@ -31,5 +32,17 @@ export const deleteProductFromBasket = async (req, res) => {
     throw createHttpError(404, 'Корзина не найдена');
   }
 
+  res.status(200).json(basket);
+};
+
+export const changeProductAtBasket = async (req, res) => {
+  const userId = req.user._id;
+  const { itemId } = req.params;
+  const { size, color, quantity } = req.body;
+  const updateData = {};
+  if (size !== undefined) updateData.size = size;
+  if (color !== undefined) updateData.color = color;
+  if (quantity !== undefined) updateData.quantity = quantity;
+  const basket = await changeProductAtBasketService(userId, itemId, updateData);
   res.status(200).json(basket);
 };

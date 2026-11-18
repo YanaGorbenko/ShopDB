@@ -10,7 +10,8 @@ import { errors } from 'celebrate';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import brandRouter from './routers/brandsRouter.js';
 import reviewRouter from './routers/rewiewsRouter.js';
-import basketRouter from './routers/basketRouter.js'
+import basketRouter from './routers/basketRouter.js';
+import promoRouter from './routers/promoRouter.js';
 
 const PORT = process.env.PORT || 3000;
 
@@ -24,6 +25,7 @@ app.use('/orders', orderRouter);
 app.use('/brands', brandRouter);
 app.use('/reviews', reviewRouter);
 app.use('/basket', basketRouter);
+app.use('/promo', promoRouter);
 
 app.use(notFoundHandler);
 app.use(errors());

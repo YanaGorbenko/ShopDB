@@ -2,60 +2,39 @@ import createHttpError from 'http-errors';
 import { getNextOrderNumber } from '../services/counterService.js';
 import {
   createOrderService,
-  getProductsByIdsService,
   getUserOrdersByIdService,
   getUserOrdersService,
+  prepareOrderItemsService,
   updateSoldCountsService,
 } from '../services/orderServices.js';
+import {
+  checkPromoCodeService,
+  incrementPromoUsageService,
+} from '../services/promoServices.js';
+import { clearBasketService } from '../services/basketServices.js';
 
 export const createOrder = async (req, res) => {
-  const { items, discount = 0, delivery, customer, comment } = req.body;
+  const { promoCode, delivery, customer, comment } = req.body;
   const userId = req.user._id;
 
-  // 1. Получаем товары из базы через сервис
-  const productIds = items.map(i => i.productId);
-  const productsFromDB = await getProductsByIdsService(productIds);
+  const orderItems = await prepareOrderItemsService(userId);
 
-  // 2. Валидация товаров (размеры, цвета)
-  const orderItems = items.map(item => {
-    const product = productsFromDB.find(
-      p => p._id.toString() === item.productId,
-    );
-    if (!product) {
-      throw createHttpError(404, `Товар ${item.productId} не найден`);
-    }
-
-    if (!product.availableSizes.includes(item.size)) {
-      throw createHttpError(
-        400,
-        `Размер "${item.size}" недоступен для товара "${product.title}". Доступные: ${product.availableSizes.join(', ')}`,
-      );
-    }
-
-    if (!product.availableColors.includes(item.color)) {
-      throw createHttpError(
-        400,
-        `Цвет "${item.color}" недоступен для товара "${product.title}". Доступные: ${product.availableColors.join(', ')}`,
-      );
-    }
-
-    return {
-      productId: product._id,
-      title: product.title,
-      price: product.price,
-      size: item.size,
-      color: item.color,
-      quantity: item.quantity,
-    };
-  });
-
-  // 3. Считаем суммы
   const sumOfOrder = orderItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
+
+  let discountPercent = 0;
+  let promoId = null;
+
+  if (promoCode) {
+    const promo = await checkPromoCodeService(promoCode);
+    discountPercent = promo.discountPercent;
+    promoId = promo._id;
+  }
+
   const priceWithDiscount =
-    Math.round(((sumOfOrder * (100 - discount)) / 100) * 100) / 100;
+    Math.round(((sumOfOrder * (100 - discountPercent)) / 100) * 100) / 100;
 
   const number = await getNextOrderNumber();
 
@@ -64,7 +43,7 @@ export const createOrder = async (req, res) => {
     items: orderItems,
     userId,
     sumOfOrder,
-    discount,
+    discount: discountPercent,
     priceWithDiscount,
     delivery,
     customer,
@@ -72,6 +51,12 @@ export const createOrder = async (req, res) => {
   });
 
   await updateSoldCountsService(orderItems);
+
+  if (promoId) {
+    await incrementPromoUsageService(promoId);
+  }
+
+  await clearBasketService(userId);
 
   res.status(201).json(order);
 };

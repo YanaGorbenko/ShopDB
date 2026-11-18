@@ -17,3 +17,24 @@ export const deleteProductFromBasketSchema = {
     itemId: Joi.string().custom(validateId).required(),
   }),
 };
+
+export const changeProductAtBasketSchema = {
+  [Segments.BODY]: Joi.object({
+    size: Joi.string().valid(
+      'XXS',
+      'XS',
+      'S',
+      'M',
+      'L',
+      'XL',
+      'XXL',
+      '3XL',
+      '4XL',
+    ),
+    color: Joi.string(),
+    quantity: Joi.number().min(1),
+  }).min(1),
+  [Segments.PARAMS]: Joi.object({
+    itemId: Joi.string().custom(validateId).required(),
+  }),
+};
