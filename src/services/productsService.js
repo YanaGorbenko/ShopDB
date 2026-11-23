@@ -15,6 +15,7 @@ export const getProductsService = async (
   onSale = false,
   isNewProduct = false,
   isTop = false,
+  gender,
 ) => {
   const skip = (page - 1) * limit;
   const productsQuery = Product.find();
@@ -78,6 +79,14 @@ export const getProductsService = async (
     const TOP_THRESHOLD = 10;
 
     productsQuery.where('soldCount').gte(TOP_THRESHOLD);
+  }
+
+  if (gender) {
+    if (gender === 'Men' || gender === 'Women') {
+      productsQuery.where('gender').in([gender, 'Unisex']);
+    } else {
+      productsQuery.where('gender').equals(gender);
+    }
   }
 
   productsQuery.sort({ createdAt: -1 });

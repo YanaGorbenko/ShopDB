@@ -22,6 +22,7 @@ export const getProductsSchema = {
     isNewProduct: Joi.boolean(),
     isTop: Joi.boolean(),
     brands: Joi.string().optional(),
+    gender: Joi.string().valid('Men', 'Women', 'Unisex').optional(),
   }),
 };
 

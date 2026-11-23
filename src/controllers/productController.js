@@ -17,6 +17,7 @@ export const getProducts = async (req, res) => {
     onSale,
     isNewProduct,
     isTop,
+    gender,
   } = req.query;
 
   let { colors, sizes, brands } = req.query;
@@ -43,6 +44,7 @@ export const getProducts = async (req, res) => {
     onSale === 'true' || onSale === true,
     isNewProduct === 'true' || isNew === true,
     isTop === 'true' || isTop === true,
+    gender,
   );
   res.json(products);
 };
