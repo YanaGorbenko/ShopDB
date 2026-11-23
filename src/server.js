@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import 'dotenv/config';
 import { connectDb } from './db/connectDB.js';
 import { errorHandler } from './middlewares/errorHandler.js';
@@ -18,6 +19,23 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000'];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  }),
+);
 
 app.use('/auth', authRouter);
 app.use('/products', productsRouter);
