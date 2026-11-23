@@ -21,6 +21,4 @@ const userSchema = new Schema(
   { timestamps: true, versionKey: false },
 );
 
-userSchema.index({ email: 1 });
-
 export const User = model('User', userSchema);
